@@ -23,9 +23,10 @@ class PolyfillController extends AbstractController
      * @return User
      */
     public function getUserDomain() {
+        if(is_null($this->getUser())) return null;
+
         $userRepo = $this->getDoctrine()->getRepository(User::class);
         $user = $this->userIdentityProvider->refreshUser($this->getUser());
-
 
         /** @var User $domainUser */
         $domainUser = $userRepo->find($user->getUserId());

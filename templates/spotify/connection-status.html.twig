@@ -10,9 +10,14 @@
             <h3 class="panel-title">Spotify Status</h3>
         </div>
         <div class="panel-body">
-            Die Verbindung zu Spotify wurde unterbrochen!<br>
+            {% if spotify_me == false %}
+            Die Verbindung zu Spotify wurde unterbrochen!
             <br>
-            <button type="button" class="btn btn-warning">Authorisieren</button>
+            <a href="{{ url('spotify_authorize') }}"><button type="button" class="btn btn-warning">Authorisieren</button></a>
+            {% else %}
+            Verbunden mit <a href="{{ spotify_me.external_urls.spotify }}">{{ spotify_me.display_name }}</a> ({{ spotify_me.product }})
+            {% endif %}<br>
+
         </div>
     </div>
 

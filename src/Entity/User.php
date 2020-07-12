@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use MsgPhp\Domain\Model\CanBeEnabled;
 use MsgPhp\Domain\Model\CreatedAtField;
@@ -31,16 +33,6 @@ class User extends BaseUser implements DomainEventHandler
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $firstname;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $lastname;
-
-    /**
      * @ORM\Column(name="apiKey", type="string", length=255, unique=true, nullable=true)
      */
     private $apiKey;
@@ -51,53 +43,32 @@ class User extends BaseUser implements DomainEventHandler
     private $active;
 
     /**
-     * @ORM\Column(name="crmUser", type="string", length=255, nullable=true)
+     * @ORM\OneToMany(targetEntity=SpotifyCredentials::class, mappedBy="user", orphanRemoval=true)
      */
-    private $crmUser;
+    private $spotifyCredentials;
 
     /**
-     * @ORM\Column(name="allowedDistricts", type="simple_array", nullable=true)
+     * @ORM\OneToMany(targetEntity=SpotifyPlaylists::class, mappedBy="user", orphanRemoval=true)
      */
-    private $allowedDistricts = [];
+    private $spotifyPlaylists;
 
     /**
-     * @ORM\Column(name="allowedRetailPartners", type="simple_array", nullable=true)
+     * @ORM\OneToMany(targetEntity=SpotifyPlayer::class, mappedBy="user", orphanRemoval=true)
      */
-    private $allowedRetailPartners = [];
+    private $spotifyPlayers;
 
     public function __construct(UserId $id, string $nickname, string $password)
     {
         $this->id = $id;
         $this->credential = new NicknamePassword($nickname, $password);
+        $this->spotifyCredentials = new ArrayCollection();
+        $this->spotifyPlaylists = new ArrayCollection();
+        $this->spotifyPlayers = new ArrayCollection();
     }
 
     public function getId(): UserId
     {
         return $this->id;
-    }
-
-    public function getFirstname(): ?string
-    {
-        return $this->firstname;
-    }
-
-    public function setFirstname(?string $firstname): self
-    {
-        $this->firstname = $firstname;
-
-        return $this;
-    }
-
-    public function getLastname(): ?string
-    {
-        return $this->lastname;
-    }
-
-    public function setLastname(?string $lastname): self
-    {
-        $this->lastname = $lastname;
-
-        return $this;
     }
 
     public function getApiKey(): ?string
@@ -124,38 +95,95 @@ class User extends BaseUser implements DomainEventHandler
         return $this;
     }
 
-    public function getCrmUser(): ?string
+    /**
+     * @return Collection|SpotifyCredentials[]
+     */
+    public function getSpotifyCredentials(): Collection
     {
-        return $this->crmUser;
+        return $this->spotifyCredentials;
     }
 
-    public function setCrmUser(string $crmUser): self
+    public function addSpotifyCredential(SpotifyCredentials $spotifyCredential): self
     {
-        $this->crmUser = $crmUser;
+        if (!$this->spotifyCredentials->contains($spotifyCredential)) {
+            $this->spotifyCredentials[] = $spotifyCredential;
+            $spotifyCredential->setUser($this);
+        }
 
         return $this;
     }
 
-    public function getAllowedDistricts(): ?array
+    public function removeSpotifyCredential(SpotifyCredentials $spotifyCredential): self
     {
-        return $this->allowedDistricts;
-    }
-
-    public function setAllowedDistricts(array $allowedDistricts): self
-    {
-        $this->allowedDistricts = $allowedDistricts;
+        if ($this->spotifyCredentials->contains($spotifyCredential)) {
+            $this->spotifyCredentials->removeElement($spotifyCredential);
+            // set the owning side to null (unless already changed)
+            if ($spotifyCredential->getUser() === $this) {
+                $spotifyCredential->setUser(null);
+            }
+        }
 
         return $this;
     }
 
-    public function getAllowedRetailPartners(): ?array
+    /**
+     * @return Collection|SpotifyPlaylists[]
+     */
+    public function getSpotifyPlaylists(): Collection
     {
-        return $this->allowedRetailPartners;
+        return $this->spotifyPlaylists;
     }
 
-    public function setAllowedRetailPartners(array $allowedRetailPartners): self
+    public function addSpotifyPlaylist(SpotifyPlaylists $spotifyPlaylist): self
     {
-        $this->allowedRetailPartners = $allowedRetailPartners;
+        if (!$this->spotifyPlaylists->contains($spotifyPlaylist)) {
+            $this->spotifyPlaylists[] = $spotifyPlaylist;
+            $spotifyPlaylist->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSpotifyPlaylist(SpotifyPlaylists $spotifyPlaylist): self
+    {
+        if ($this->spotifyPlaylists->contains($spotifyPlaylist)) {
+            $this->spotifyPlaylists->removeElement($spotifyPlaylist);
+            // set the owning side to null (unless already changed)
+            if ($spotifyPlaylist->getUser() === $this) {
+                $spotifyPlaylist->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SpotifyPlayer[]
+     */
+    public function getSpotifyPlayers(): Collection
+    {
+        return $this->spotifyPlayers;
+    }
+
+    public function addSpotifyPlayer(SpotifyPlayer $spotifyPlayer): self
+    {
+        if (!$this->spotifyPlayers->contains($spotifyPlayer)) {
+            $this->spotifyPlayers[] = $spotifyPlayer;
+            $spotifyPlayer->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSpotifyPlayer(SpotifyPlayer $spotifyPlayer): self
+    {
+        if ($this->spotifyPlayers->contains($spotifyPlayer)) {
+            $this->spotifyPlayers->removeElement($spotifyPlayer);
+            // set the owning side to null (unless already changed)
+            if ($spotifyPlayer->getUser() === $this) {
+                $spotifyPlayer->setUser(null);
+            }
+        }
 
         return $this;
     }
