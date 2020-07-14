@@ -52,18 +52,12 @@ class User extends BaseUser implements DomainEventHandler
      */
     private $spotifyPlaylists;
 
-    /**
-     * @ORM\OneToMany(targetEntity=SpotifyPlayer::class, mappedBy="user", orphanRemoval=true)
-     */
-    private $spotifyPlayers;
-
     public function __construct(UserId $id, string $nickname, string $password)
     {
         $this->id = $id;
         $this->credential = new NicknamePassword($nickname, $password);
         $this->spotifyCredentials = new ArrayCollection();
         $this->spotifyPlaylists = new ArrayCollection();
-        $this->spotifyPlayers = new ArrayCollection();
     }
 
     public function getId(): UserId
@@ -151,37 +145,6 @@ class User extends BaseUser implements DomainEventHandler
             // set the owning side to null (unless already changed)
             if ($spotifyPlaylist->getUser() === $this) {
                 $spotifyPlaylist->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|SpotifyPlayer[]
-     */
-    public function getSpotifyPlayers(): Collection
-    {
-        return $this->spotifyPlayers;
-    }
-
-    public function addSpotifyPlayer(SpotifyPlayer $spotifyPlayer): self
-    {
-        if (!$this->spotifyPlayers->contains($spotifyPlayer)) {
-            $this->spotifyPlayers[] = $spotifyPlayer;
-            $spotifyPlayer->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSpotifyPlayer(SpotifyPlayer $spotifyPlayer): self
-    {
-        if ($this->spotifyPlayers->contains($spotifyPlayer)) {
-            $this->spotifyPlayers->removeElement($spotifyPlayer);
-            // set the owning side to null (unless already changed)
-            if ($spotifyPlayer->getUser() === $this) {
-                $spotifyPlayer->setUser(null);
             }
         }
 

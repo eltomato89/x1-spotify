@@ -5,6 +5,13 @@
 
 {% block page_content %}
 
+    {% if app.request.get('error') == "account_not_connected" %}
+        <div class="alert alert-danger" role="alert">
+            <strong>Die Verbindung zu Ihrem Spotify Account wurde unterbrochen</strong><br>
+            Klicken Sie auf "Authorisieren" um die Verbindung wiederherzustellen!
+        </div>
+    {% endif %}
+
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Spotify Status</h3>
@@ -27,6 +34,21 @@
         </div>
         <div class="panel-body">
             Letzter Kontakt zum Gira X1: Heute, 12:43 Uhr
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">API Schlüssel</h3>
+        </div>
+        <div class="panel-body">
+            <form action="{{ url('userprofile_apikey_reset') }}" method="post">
+                <div class="form-group">
+                    <label>API Key</label>
+                    <input type="text" class="form-control" value="{{ user.apiKey }}" readonly>
+                </div>
+                <button type="submit" class="btn btn-danger" name="apikey_reset" value="1">Reset</button>
+            </form>
         </div>
     </div>
 

@@ -4,27 +4,24 @@
 {% block page_subtitle %}Player{% endblock %}
 
 {% block page_content %}
-
-    <div class="row" style="margin-bottom: 20px;">
-        <div class="col-xs-12">
-            <button type="button" class="btn btn-success pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Neu</button>
+    <div class="row">
+    {% for device in spotifyDevices %}
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        {{ device.name }}
+                    </h3>
+                </div>
+                <div class="panel-body">
+                        <div class="form-group">
+                            <label for="playerId_{{ loop.index }}">Player ID</label>
+                            <input type="text" class="form-control" name="playerId" id="playerId_{{ loop.index }}" value="{{ device.id }}" readonly>
+                        </div>
+                </div>
+            </div>
         </div>
-
-    </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">
-                Player 1
-                <button type="button" class="btn btn-sm btn-danger pull-right" style="padding-top: 1px; padding-bottom: 1px;">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Löschen
-                </button>
-
-            </h3>
-        </div>
-        <div class="panel-body">
-            Panel content
-        </div>
+    {% endfor %}
     </div>
 
 {% endblock %}
