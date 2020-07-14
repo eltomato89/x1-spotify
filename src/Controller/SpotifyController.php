@@ -28,7 +28,7 @@ class SpotifyController extends PolyfillController
         parent::__construct($provider);
 
         $this->session = new Session(
-            'd5f7258265454a7499616322970c809a', '994eebd8f1f34fad992d5b47a6a488a8', 'http://localhost:8000/spotify/authorize'
+            'd5f7258265454a7499616322970c809a', '994eebd8f1f34fad992d5b47a6a488a8', 'http://x1tools.jensk.tech/spotify/authorize'
         );
 
     }
